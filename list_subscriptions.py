@@ -99,5 +99,7 @@ if __name__ == '__main__':
   
   subscriptions_list_my_subscriptions(client,
     part='snippet,contentDetails',
-    mine=True)
+    mine=True,
+    maxResults=50,
+    order=unread)
   
