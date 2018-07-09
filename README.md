@@ -1,6 +1,6 @@
 # youtube-subscriptions-sorted-by-activity-date
 
-Displays a list of YouTube channels you subscribe to in order of least to most recent video uploaded
+Displays a list of YouTube channels you subscribe to in order of when they last uploaded a video
 
 ## How to run
 
