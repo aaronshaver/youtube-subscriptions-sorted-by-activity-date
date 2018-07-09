@@ -105,7 +105,7 @@ if __name__ == '__main__':
   os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
   client = get_authenticated_service()
 
-  print("\nGetting subscriptions... (this may take a few seconds)") 
+  print("\nGetting subscriptions... (this may take a few seconds)\n") 
   subscriptions = subscriptions_list_my_subscriptions(client,
     part='snippet',
     mine=True,
@@ -124,8 +124,13 @@ if __name__ == '__main__':
     channel_id = channel['id']
     activities.append(activities_list(client, part='snippet', channelId=channel_id, maxResults=1))
 
-  print("type,channelTitle,publishedAt,title")
+  print("publishedAt,type,channelTitle,videoTitle")
+  output_strings = []
   for activity in activities:
     if(len(activity['items']) > 0):
       item = activity['items'][0]['snippet']
-      print(",".join([item['type'], item['channelTitle'], item['publishedAt'], item['title']]))
+      output_strings.append(",".join([item['publishedAt'], item['type'], item['channelTitle'], item['title']]))
+  
+  output_strings.sort()
+  for string in output_strings:
+    print(string)
