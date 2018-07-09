@@ -106,11 +106,13 @@ if __name__ == '__main__':
   client = get_authenticated_service()
 
   print("\nGetting subscriptions... (this may take a few seconds)\n") 
+  # grab list of subscribed channels for your user
   subscriptions = subscriptions_list_my_subscriptions(client,
     part='snippet',
     mine=True,
     maxResults=50)
 
+  # extract only the data we care about, and put the results into a list
   channels = subscriptions['items']
   extracted_channel_data = []
   for channel in channels:
@@ -119,11 +121,13 @@ if __name__ == '__main__':
       {'id': channel['snippet']['resourceId']['channelId'], 'title': channel['snippet']['title']}
     )
 
+  # get the most recent video upload (1 video) data for each channel
   activities = []
   for channel in extracted_channel_data:
     channel_id = channel['id']
     activities.append(activities_list(client, part='snippet', channelId=channel_id, maxResults=1))
 
+  # assemble the output into a CSV-like format
   print("publishedAt,type,channelTitle,videoTitle")
   output_strings = []
   for activity in activities:
@@ -131,6 +135,7 @@ if __name__ == '__main__':
       item = activity['items'][0]['snippet']
       output_strings.append(",".join([item['publishedAt'], item['type'], item['channelTitle'], item['title']]))
   
+  # sort by oldest date first in-place before printing; sorta hackey but whatever
   output_strings.sort()
   for string in output_strings:
     print(string)
