@@ -26,9 +26,9 @@ def get_authenticated_service():
   credentials = flow.run_console()
   return build(API_SERVICE_NAME, API_VERSION, credentials = credentials)
 
-def print_response(response):
+def pretty_print(object):
   printer = pprint.PrettyPrinter(indent=4)
-  printer.pprint(response)
+  printer.pprint(object)
 
 # Build a resource based on a list of properties given as key-value pairs.
 # Leave properties with empty values out of the inserted resource.
@@ -88,18 +88,44 @@ def subscriptions_list_my_subscriptions(client, **kwargs):
     **kwargs
   ).execute()
 
-  return print_response(response)
+  return response
 
+def activities_list(client, **kwargs):
+  # See full sample for function
+  kwargs = remove_empty_kwargs(**kwargs)
+
+  response = client.activities().list(
+    **kwargs
+  ).execute()
+  return response
 
 if __name__ == '__main__':
   # When running locally, disable OAuthlib's HTTPs verification. When
   # running in production *do not* leave this option enabled.
   os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
   client = get_authenticated_service()
-  
-  subscriptions_list_my_subscriptions(client,
-    part='snippet,contentDetails',
+
+  print("\nGetting subscriptions... (this may take a few seconds)") 
+  subscriptions = subscriptions_list_my_subscriptions(client,
+    part='snippet',
     mine=True,
-    maxResults=50,
-    order=unread)
-  
+    maxResults=50)
+
+  channels = subscriptions['items']
+  extracted_channel_data = []
+  for channel in channels:
+    # print("adding " + channel['snippet']['channelId'])
+    extracted_channel_data.append(
+      {'id': channel['snippet']['resourceId']['channelId'], 'title': channel['snippet']['title']}
+    )
+
+  activities = []
+  for channel in extracted_channel_data:
+    channel_id = channel['id']
+    activities.append(activities_list(client, part='snippet', channelId=channel_id, maxResults=1))
+
+  print("type,channelTitle,publishedAt,title")
+  for activity in activities:
+    if(len(activity['items']) > 0):
+      item = activity['items'][0]['snippet']
+      print(",".join([item['type'], item['channelTitle'], item['publishedAt'], item['title']]))
