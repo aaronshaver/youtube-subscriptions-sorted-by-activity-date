@@ -8,6 +8,8 @@ To run, you'll need to install some Python dependencies, and create OAuth creden
 
 https://google-developers.appspot.com/youtube/v3/code_samples/code_snippet_instructions#toggle-code-snippets-and-full-samples
 
+Then do `python list_subscriptions.py` at the command line.
+
 ## Example output:
 
 Getting subscriptions... (this may take a few seconds)
